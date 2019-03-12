@@ -52,11 +52,12 @@ func NewAPIRequest(method string, endpoint string, payload io.Reader) *APIReques
 }
 
 type Requester struct {
-	Base      string
-	BasicAuth *BasicAuth
-	Client    *http.Client
-	CACert    []byte
-	SslVerify bool
+	Base       string
+	BasicAuth  *BasicAuth
+	BearerAuth *BearerAuth
+	Client     *http.Client
+	CACert     []byte
+	SslVerify  bool
 }
 
 func (r *Requester) SetCrumb(ar *APIRequest) error {
@@ -217,6 +218,10 @@ func (r *Requester) Do(ar *APIRequest, responseStruct interface{}, options ...in
 
 	if r.BasicAuth != nil {
 		req.SetBasicAuth(r.BasicAuth.Username, r.BasicAuth.Password)
+	}
+
+	if r.BearerAuth != nil {
+		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", r.BearerAuth.Authorization))
 	}
 
 	for k := range ar.Headers {

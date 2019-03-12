@@ -31,6 +31,10 @@ type BasicAuth struct {
 	Password string
 }
 
+type BearerAuth struct {
+	Authorization string
+}
+
 type Jenkins struct {
 	Server    string
 	Version   string
@@ -570,6 +574,8 @@ func CreateJenkins(client *http.Client, base string, auth ...interface{}) *Jenki
 	}
 	if len(auth) == 2 {
 		j.Requester.BasicAuth = &BasicAuth{Username: auth[0].(string), Password: auth[1].(string)}
+	} else if len(auth) == 1 {
+		j.Requester.BearerAuth = &BearerAuth{Authorization: auth[0].(string)}
 	}
 	return j
 }
